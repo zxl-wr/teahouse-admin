@@ -1,5 +1,5 @@
 {
-  "name": "demo",
+  "name": "teahouse-admin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,6 +15,7 @@
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
+    "@types/node": "^20.2.3",
     "@vitejs/plugin-vue": "^4.1.0",
     "typescript": "^5.0.2",
     "unocss": "^0.51.13",

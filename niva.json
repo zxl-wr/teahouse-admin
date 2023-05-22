@@ -1,0 +1,17 @@
+{
+  "name": "teahouse",
+  "uuid": "cf854b73-1166-459c-bcc5-5159525490d6",
+  "icon": "chess.png",
+  "version": "0.0.0",
+  "debug": {
+    "entry": "http://localhost:5173",
+    "resource": "public"
+  },
+  "build": {
+    "resource": "dist"
+  },
+  "window": {
+    "icon": "chess.png",
+    "minSize": { "width": 1280, "height": 720 }
+  }
+}
