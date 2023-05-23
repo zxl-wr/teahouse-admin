@@ -17,12 +17,14 @@ export default defineConfig({
       presets: [presetUno()],
       // 自定义规则
       rules: [
-        ['flex-row', { display: 'flex', 'flex-direction': 'row' }],
-        ['flex-row-center', { display: 'flex', 'flex-direction': 'row', 'align-items': 'center' }],
+        ['flex', { display: 'flex', 'flex-wrap': 'wrap' }],
+        ['flex-row', { display: 'flex', 'flex-direction': 'row', 'align-items': 'center' }],
+        ['flex-row-center', { display: 'flex', 'flex-direction': 'row', 'align-items': 'center', 'justify-content': 'center' }],
         ['flex-row-between', { display: 'flex', 'flex-direction': 'row', 'align-items': 'center', 'justify-content': 'space-between' }],
         ['flex-column', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center' }],
         ['flex-column-center', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'center' }],
         ['flex-column-between', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'space-between' }],
+        ['border', { border: '1px solid' }],
       ],
     }),
     AutoImport({
