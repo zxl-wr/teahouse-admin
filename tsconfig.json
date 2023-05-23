@@ -31,7 +31,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     // 自定义添加
-    "./auto-imports.d.ts"
+    "config/*.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
