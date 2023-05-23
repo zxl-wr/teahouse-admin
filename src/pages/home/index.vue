@@ -1,12 +1,41 @@
 <template>
-  <div>前台营业</div>
+  <div class="flex w-100% h-auto">
+    <div class="flex-column-center m-2 w-120px h-160px border border-rounded-4 bg-#fff cursor-pointer"
+      @click="isShowDialog = true">
+      <img class="w-80px h-80px" src="@/assets/img/img-add.png" alt="添加桌台类型" />
+      <div class="text-4">添加桌台</div>
+    </div>
+  </div>
+
+  <el-dialog v-model="isShowDialog" title="新增桌台" :before-close="handleClose">
+    <el-form :model="tableForm" label-width="80px">
+      <el-form-item label="名称" prop="name">
+        <el-input v-model="tableForm.name" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button type="primary" @click="addTable"> 确认 </el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
-// import { openDB, updateDB } from "@/indexDB";
+const isShowDialog = ref(false);
+const tableForm = reactive({ name: "" });
 
-// openDB("db").then((res) => {
-//   const db = res;
-//   updateDB("db", db.version + 1, "table", ["name"]);
-// });
+// 处理关闭：重置表单
+const handleClose = (done: () => void) => {
+  tableForm.name = "";
+  done();
+};
+
+// 新增类型
+const addTable = (): void => {
+  if (/^.{1,9}$/.test(tableForm.name)) {
+    tableForm.name = "";
+    isShowDialog.value = false;
+  } else {
+    ElMessage.error("请输入 1~9 位名称");
+  }
+};
 </script>
