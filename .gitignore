@@ -1,2 +1,5 @@
+dist
 node_modules
 *-lock.*
+auto-imports.d.ts
+components.d.ts
