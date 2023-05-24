@@ -12,6 +12,7 @@
   },
   "window": {
     "icon": "chess.png",
-    "minSize": { "width": 1280, "height": 720 }
+    "minSize": { "width": 1280, "height": 720 },
+    "resizable": false
   }
 }
