@@ -23,6 +23,8 @@ export const useOrderStore = defineStore('order', () => {
   // 结束订单
   function endOrder(tableId: string | number) {
     currentOrderList.value = currentOrderList.value.filter((item) => item.tableId != tableId); // 过滤出该桌台的订单
+    console.log(currentOrderList.value);
+    
     setLocalStorage(currentOrderList.value);
   }
 

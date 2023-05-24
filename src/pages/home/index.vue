@@ -1,9 +1,4 @@
 <template>
-  <!-- 新增按钮 -->
-  <el-row class="mb-4" justify="end">
-    <el-button type="primary" @click="isShowDialog = true">+ 添加桌台
-    </el-button>
-  </el-row>
   <!-- 桌台 -->
   <div class="h-auto">
     <div class="card m-2 text-center" v-for="table in defaultTables" :key="table.id" @click="clickTable(table.id)">
@@ -12,13 +7,8 @@
     </div>
   </div>
   <!-- 消详情抽屉 -->
-  <el-drawer v-model="isShowdDawer" direction="btt" size="300px" :with-header="false" :before-close="handleDawerClose">
+  <el-drawer v-model="isShowDawer" direction="btt" size="300px" :with-header="false" :before-close="handleDawerClose">
     <div class="flex-row-between">
-      <div>
-        <div>开始时间：{{ start_at }}</div>
-        <div>当前时间：{{ current_at }}</div>
-        <div>{{ differ }}</div>
-      </div>
       <el-table style="width: 620px" :data="goodsData" height="260">
         <el-table-column prop="id" label="序号" />
         <el-table-column prop="name" label="名称" />
@@ -31,21 +21,16 @@
           <el-empty class="!p-0" :image-size="80" description="暂无数据" />
         </template>
       </el-table>
+      <div class="w-500px h-260px">
+        <div class="text-6">开始时间：{{ start_at }}</div>
+        <div class="mt-8 text-12 text-center">{{ differ }}</div>
+        <div class="mb-8 text-8 text-center">￥200</div>
+        <el-button class="float-right !w-120px !h-48px !text-5" type="danger" size="large"
+          @click="endOrder(currentOrder.tableId)"> 结算 </el-button>
+        <el-button class="float-right mx-4  !w-120px !h-48px !text-5" type="primary" size="large"> + 消费 </el-button>
+      </div>
     </div>
   </el-drawer>
-  <!-- 新增桌台对话框 -->
-  <el-dialog v-model="isShowDialog" title="新增桌台" :before-close="handleClose">
-    <el-form :model="tableForm" label-width="80px">
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="tableForm.name" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <el-button type="primary" @click="addTable">
-        确认
-      </el-button>
-    </template>
-  </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -76,27 +61,26 @@ const filterTableImg = (id: string | number) => {
  */
 import type { Order } from '@/assets/type';
 import { useDateFormat, useTimestamp } from '@vueuse/core';
-
-const isShowdDawer = ref(false); // 是否打开消费详情抽屉
+const isShowDawer = ref(false); // 是否打开消费详情抽屉
 const currentOrder = ref<Order>({ id: -1, tableId: -1, time: 0 }); // 当前订单
 const { addOrder } = orderStore;
 const { timestamp, pause, resume } = useTimestamp({ controls: true }); // 当前时间戳
 pause(); // 先暂停当前时间计时
-let current_at = useDateFormat(timestamp, 'YYYY-MM-DD HH:mm:ss'); // 当前时间格式化
 let start_at = ref(); // 订单开始时间格式化
-
 // 判断是已有订单还是新增订单
-const clickTable = (tableId: string | number) => {
-  resume(); // 开始当前时间计时
+const clickTable = async (tableId: string | number) => {
   // 没有开台去新增订单
   if (tableIdList.value.indexOf(tableId) == -1) {
+    const res = await ElMessageBox.confirm('是否确认开台？', { confirmButtonText: '确认', cancelButtonText: '取消', }).catch(() => { return 'cancel' })
+    if (res == 'cancel') return;
     const _timestamp = new Date().getTime();
     const _orderId = _timestamp + '-' + tableId;
     addOrder({ id: _orderId, tableId, time: _timestamp });
   }
+  resume(); // 开始当前时间计时
   currentOrder.value = currentOrderList.value.find((item) => item.tableId == tableId) || { id: -1, tableId: -1, time: 0 }; // 当前订单
   start_at = useDateFormat(currentOrder.value.time, 'YYYY-MM-DD HH:mm:ss'); // 订单开始时间格式化
-  isShowdDawer.value = true; // 打开消费详情抽屉
+  isShowDawer.value = true; // 打开消费详情抽屉
 };
 // 关闭消费详情抽屉
 const handleDawerClose = (done: () => void) => {
@@ -136,29 +120,15 @@ const prefixZero = (n: number, m = 2) => {
  * 消费、结算功能
  */
 
-// 计时功能
-// const start_at =ref(1684900426000);
-// const current_at = ref(new Data())
-// 消费记录
-const goodsData = ref([]);
+const { endOrder } = orderStore;
 
-/**
- * 新增桌台功能
- */
-const isShowDialog = ref(false); // 是否展示新增弹窗
-const tableForm = reactive({ name: '' }); // 弹窗中的表单
-// 处理关闭：重置表单
-const handleClose = (done: () => void) => {
-  tableForm.name = '';
-  done();
-};
-// 新增桌台
-const addTable = (): void => {
-  if (/^.{1,9}$/.test(tableForm.name)) {
-    tableForm.name = '';
-    isShowDialog.value = false;
-  } else {
-    ElMessage.error('请输入 1~9 位名称');
-  }
-};
+
+// 消费记录
+const goodsData = ref([
+  { id: 0, name: '简餐1', price: 50, number: 1 },
+  { id: 0, name: '简餐1', price: 50, number: 1 },
+  { id: 0, name: '简餐1', price: 50, number: 1 },
+  { id: 0, name: '简餐1', price: 50, number: 1 },
+  { id: 0, name: '简餐1', price: 50, number: 1 },
+]);
 </script>
