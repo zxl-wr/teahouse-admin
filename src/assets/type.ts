@@ -10,14 +10,14 @@ export interface Order {
 
 // 商品列表
 export interface Goods {
-  id: number; // 商品id
+  id: number | string; // 商品id
   name: string; // 名称
-  type_id: number; // 商品类型id
+  type_id: number | string; // 商品类型id
   price: number; // 单价
 }
 
 // 订单中已购商品的类型
 export interface Order_Goods {
-  goods_id: number; // 商品id
+  goods_id: number | string; // 商品id
   number: number; // 数量
 }
