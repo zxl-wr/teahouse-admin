@@ -5,7 +5,7 @@
       @click="currentTab = tab.id">
       {{ tab.name }}
     </el-button>
-    <el-button class="!ml-auto" type="primary" @click="openDialog">
+    <el-button class="!ml-auto" type="primary" @click="isShowDialog = true;">
       + 增加
     </el-button>
   </el-row>
@@ -15,7 +15,9 @@
     <el-table-column prop="name" label="名称" />
     <el-table-column prop="price" label="价格" />
     <el-table-column label="操作">
-      <el-button type="danger">删除</el-button>
+      <template #default="scope">
+        <el-button type="danger" @click="deleteGoods(scope.row.id)">删除</el-button>
+      </template>
     </el-table-column>
   </el-table>
   <!-- 新增弹窗 -->
@@ -27,9 +29,6 @@
           <el-option v-for="item in goodsType.filter((i) => i.id >= 0)" :key="item.id" :label="item.name"
             :value="item.id" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="ID">
-        <el-input v-model="newGoods.id" disabled />
       </el-form-item>
       <el-form-item label="名称">
         <el-input v-model="newGoods.name" />
@@ -46,50 +45,35 @@
 </template>
 
 <script lang="ts" setup>
-// 商品类型
-import { goodsType } from '@/assets/constant.ts';
-const currentTab = ref(-1);
-
-// 商品数据
-import { openDB, closeDB, updateDB, readDB } from '@/indexDB';
-const tableData = ref<object[]>([]);
-const goodsLength = computed(() => tableData.value.length);
+/**
+ * 获取商品数据
+ */
+import { goodsType } from '@/assets/constant.ts';// 商品类型
+import { db } from '@/utils/indexDB.ts';// 数据库
+const currentTab = ref(-1); // 默认类型
+const tableData = ref<object[]>([]); // 表格数据
 // 获取表单数据
 const getTableData = async () => {
-  const db = await openDB().catch(() => { return false });
-  if (!db) return;
-  const DBstores = Object.values(db.objectStoreNames);
-  const DBversion = db.version;
-  if (DBstores.indexOf('goods_store') == -1) updateDB(DBversion + 1, 'goods_store', 'id', ['type_id']);
-  const _data = await readDB('goods_store').catch(() => { return false });
-  if (typeof _data == 'boolean') return;
-  tableData.value = _data;
-  closeDB()
+  if (currentTab.value == -1) tableData.value = await db.goods_store.orderBy('id').toArray();
+  else tableData.value = await db.goods_store.where({ type_id: currentTab.value }).toArray();
 };
-onMounted(() => {
-  getTableData();
-});
+onMounted(() => { getTableData() });
+watch(currentTab, () => getTableData()); // 监听类型切换
 
 /**
  * 新增商品功能
  */
 import { Goods } from '@/assets/type.ts';
-import { addData } from '@/indexDB';
-const isShowDialog = ref(false);
+import { IndexableType } from 'dexie';
+// 新增的数据
 const newGoods = reactive<Goods>({
-  id: '', // 商品id
   name: '', // 名称
   type_id: '', // 商品类型id
   price: 0, // 单价
 });
-// 打开新增弹框
-const openDialog = () => {
-  newGoods.id = goodsLength.value + 1;
-  isShowDialog.value = true;
-};
+const isShowDialog = ref(false); // 是否打开新增商品弹窗
 // 关闭新增弹框
 const closeDialog = () => {
-  newGoods.id = '';
   newGoods.name = '';
   newGoods.type_id = '';
   newGoods.price = 0;
@@ -97,8 +81,17 @@ const closeDialog = () => {
 };
 // 新增商品
 const addGoods = async () => {
-  const db = await openDB().catch(() => { return false });
-  if (!db) return;
-  addData('goods_store', newGoods)
+  await db.goods_store.add({ name: newGoods.name, type_id: newGoods.type_id, price: newGoods.price });
+  getTableData();
+  closeDialog();
 };
+
+/**
+ * 删除商品
+ */
+const deleteGoods = async (id: IndexableType) => {
+  await db.goods_store.delete(id);
+  getTableData();
+}
+
 </script>
