@@ -28,12 +28,37 @@
         <el-button class="float-right !w-120px !h-48px !text-5" type="danger" size="large" @click="isShowDialog = true">
           结算
         </el-button>
-        <el-button class="float-right mx-4 !w-120px !h-48px !text-5" type="primary" size="large">
+        <el-button class="float-right mx-4 !w-120px !h-48px !text-5" type="primary" size="large"
+          @click="isShowTransfer = true">
           + 消费
         </el-button>
       </div>
     </div>
   </el-drawer>
+  <!-- 新增消费 -->
+  <el-dialog v-model="isShowTransfer" title="新增消费" width="900" align-center :show-close="false"
+    :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-select class="mb-4" v-model="currentGoodsTypeId" placeholder="请选择类型">
+      <el-option v-for="item in goodsType.filter((i) => i.id >= 0)" :key="item.id" :label="item.name" :value="item.id" />
+    </el-select>
+    <div class="flex-row">
+      <el-table :data="goodsList" style="width: 50%" height="400" border @selection-change="changeSelection">
+        <el-table-column type="selection" width="40" />
+        <el-table-column prop="name" label="名称" />
+        <el-table-column prop="price" label="价格" />
+      </el-table>
+      <el-button class="mx-2" type="primary" @click="addGoods"> 新增 > </el-button>
+      <el-table :data="newGoods" style="width: 50%" height="400" border stripe>
+        <el-table-column prop="name" label="新增消费" />
+        <el-table-column prop="price" label="单价" />
+        <el-table-column prop="number" label="数量" />
+      </el-table>
+    </div>
+    <template #footer>
+      <el-button @click="isShowTransfer = false">取消</el-button>
+      <el-button type="primary" @click="addGoodsData">确定</el-button>
+    </template>
+  </el-dialog>
   <!-- 结算弹窗 -->
   <el-dialog v-model="isShowDialog" title="结账">
     <el-table :data="goodsData" max-height="300">
@@ -125,12 +150,45 @@ watch(timestamp, (newValue) => {
 /**
  * 消费功能
  */
-// 消费记录
-const goodsData = ref([
-  { id: 0, name: '简餐1', price: 50, number: 1 },
-  { id: 1, name: '茶水', price: 100, number: 1 },
-  { id: 2, name: '卤蛋', price: 5, number: 1 },
-]);
+import { goodsType } from '@/assets/constant.ts';// 商品类型
+import { db } from '@/utils/indexDB.ts';// 数据库
+import { Goods, Order_Goods } from "@/assets/type.ts";
+const isShowTransfer = ref(false); // 是否打开新增消费穿梭框
+const currentGoodsTypeId = ref(); // 当前商品类型id
+const goodsList = ref<Goods[]>([]); // 当前类型中的商品列表
+const selectedGoods = ref<Goods[]>([]); // 选中但未新增的商品
+const newGoods = ref<Order_Goods[]>([]); // 新增的商品
+const goodsData = ref<Order_Goods[]>([]); // 消费的商品
+// 监听开关，重置数据
+watch(isShowTransfer, (newValue) => {
+  currentGoodsTypeId.value = '';
+  if (newValue) newGoods.value = goodsData.value;
+})
+// 监听类型切换，获取数据
+watch(currentGoodsTypeId, async (newValue) => {
+  if (newValue == -1) goodsList.value = [];
+  else {
+    const res = await db.goods_store.where({ type_id: newValue }).toArray();
+    const _ids = newGoods.value.map(item => { return item.goods_id })
+    goodsList.value = res.filter(item => _ids.indexOf(item?.id) == -1)
+  }
+});
+// 选择商品
+const changeSelection = (e: Goods[]) => {
+  selectedGoods.value = e;
+}
+// 新增商品
+const addGoods = () => {
+  for (const item of selectedGoods.value) {
+    newGoods.value.push({ goods_id: item.id, number: 1 })
+  }
+  currentGoodsTypeId.value = '';
+};
+// 新增消费
+const addGoodsData = () => {
+  goodsData.value = newGoods.value;
+  isShowTransfer.value = false;
+}
 
 /**
  * 结算功能
