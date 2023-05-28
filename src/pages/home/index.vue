@@ -36,8 +36,8 @@
     </div>
   </el-drawer>
   <!-- 新增消费 -->
-  <el-dialog v-model="isShowTransfer" title="新增消费" width="900" align-center :show-close="false"
-    :close-on-click-modal="false" :close-on-press-escape="false">
+  <el-dialog v-model="isShowTransfer" title="新增消费" width="900" align-center :close-on-click-modal="false"
+    :close-on-press-escape="false">
     <el-select class="mb-4" v-model="currentGoodsTypeId" placeholder="请选择类型">
       <el-option v-for="item in goodsType.filter((i) => i.id >= 0)" :key="item.id" :label="item.name" :value="item.id" />
     </el-select>
@@ -54,10 +54,6 @@
         <el-table-column prop="number" label="数量" />
       </el-table>
     </div>
-    <template #footer>
-      <el-button @click="isShowTransfer = false">取消</el-button>
-      <el-button type="primary" @click="addGoodsData">确定</el-button>
-    </template>
   </el-dialog>
   <!-- 结算弹窗 -->
   <el-dialog v-model="isShowDialog" title="结账">
@@ -184,11 +180,6 @@ const addGoods = () => {
   }
   currentGoodsTypeId.value = '';
 };
-// 新增消费
-const addGoodsData = () => {
-  goodsData.value = newGoods.value;
-  isShowTransfer.value = false;
-}
 
 /**
  * 结算功能
