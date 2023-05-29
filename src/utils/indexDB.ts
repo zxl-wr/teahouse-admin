@@ -1,7 +1,7 @@
-import Dexie, { Table } from "dexie";
-import { Order, Goods } from "@/assets/type.ts";
+import Dexie, { Table } from 'dexie';
+import { Order, Goods } from '@/assets/type.ts';
 
-const dbName = "app_db"; // 数据库名称
+const dbName = 'app_db'; // 数据库名称
 
 export class appDB extends Dexie {
   order_store!: Table<Order>;
@@ -10,8 +10,8 @@ export class appDB extends Dexie {
   constructor() {
     super(dbName);
     this.version(1).stores({
-      order_store: "++id, table_id",
-      goods_store: "++id, type_id",
+      order_store: 'id, table_id, end_at',
+      goods_store: '++id, type_id',
     });
   }
 }
