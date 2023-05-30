@@ -23,3 +23,10 @@ export interface Order_Goods {
   number: number; // 数量
   time_at: number; // 时间
 }
+
+// 收费格式
+export interface Charge {
+  district: number[]; // 时间区间
+  type: number; // 收费类型：0（区间收费）/1（按时收费/小时）
+  price: number; // 金额
+}
