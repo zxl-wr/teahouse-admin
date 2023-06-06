@@ -138,7 +138,7 @@ const clickTable = async (tableId: number) => {
     });
     if (res == 'cancel') return;
     const _timestamp = new Date().getTime(); // 开始时间
-    const _orderId = _timestamp + '-' + tableId; // 订单id
+    const _orderId = _timestamp + '00' + tableId; // 订单id
     await db.order_store.add({ id: _orderId, table_id: tableId, start_at: _timestamp, end_at: -1 });
     await getCurrentOrderList();
   }
@@ -244,26 +244,6 @@ const getIndexInArr = (_arr: object[], _obj: object) => {
 };
 
 /**
- * 结算功能
- */
-const isShowDialog = ref(false);
-// 结算
-const clickEndOrder = async () => {
-  const _timestamp = new Date().getTime(); // 结束时间
-  const _currentOrder = await db.order_store.get({ id: currentOrder.value?.id });
-  if (!_currentOrder) return;
-  _currentOrder.end_at = _timestamp;
-  db.order_store
-    .update(_currentOrder.id, _currentOrder)
-    .then(() => {
-      getCurrentOrderList();
-      isShowDialog.value = false;
-      isShowDawer.value = false;
-    })
-    .catch((error) => console.log(error));
-};
-
-/**
  * 统计收费
  */
 import { storeToRefs } from 'pinia';
@@ -293,5 +273,35 @@ const currentOrderPrice = computed(() => {
 // 订单总价：开台价格 + 消费价格
 const allPrice = () => {
   return '￥' + (currentTablePrice.value + currentOrderPrice.value);
+};
+
+/**
+ * 结算功能
+ */
+const isShowDialog = ref(false);
+// 结算
+const clickEndOrder = async () => {
+  // 获取订单
+  const _currentOrder = await db.order_store.get({ id: currentOrder.value?.id });
+  if (!_currentOrder) return;
+  // 添加开台费
+  const _tableItem = { name: '开台费', price: currentTablePrice.value, number: 1, time_at: _currentOrder.start_at };
+  if (!_currentOrder.goods_list) _currentOrder.goods_list = [_tableItem]
+  // else if (_currentOrder.goods_list && _currentOrder.goods_list[0].name == '开台费') _currentOrder.goods_list[0] = _tableItem;
+  else _currentOrder.goods_list.unshift(_tableItem)
+  // 添加结束时间
+  const _timestamp = new Date().getTime();
+  _currentOrder.end_at = _timestamp;
+  // 添加总金额
+  _currentOrder.price = currentTablePrice.value + currentOrderPrice.value
+  // 更新数据库
+  db.order_store
+    .update(_currentOrder.id, _currentOrder)
+    .then(() => {
+      getCurrentOrderList();
+      isShowDialog.value = false;
+      isShowDawer.value = false;
+    })
+    .catch((error) => console.log(error));
 };
 </script>
