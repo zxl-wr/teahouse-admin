@@ -5,6 +5,7 @@ interface Business {
   phone: string; // 电话
   address: string; // 地址
   width: number; // 打印宽度
+  padding: number; // 打印边界
 }
 
 // 默认商家
@@ -12,7 +13,8 @@ const defineBusiness: Business = {
   name: "天运茶楼",
   phone: "0551-65181929",
   address: "合肥市蜀山区金牛路颐和小学南200米",
-  width: 400,
+  width: 320,
+  padding: 0,
 };
 
 // 优先查看缓存里的商家
