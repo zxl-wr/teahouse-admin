@@ -1,25 +1,31 @@
 <template>
-  <div class="py-40px bg-#fff" :style="{ width: `${business.width}px`, padding: `auto ${business.padding}px` }">
-    <h1 class="text-center">结账单</h1>
-    <h3>{{ business.name }}</h3>
+  <div class="bg-#fff text-4" :style="{ width: `${business.width}px`, padding: `auto ${business.padding}px` }">
+    <div class="ml-16 text-6">结账单</div>
+    <div>{{ business.name }}</div>
     <div>账单号：{{ defaultOrder.id }}</div>
     <div>开台时间：{{ useDateFormat(defaultOrder.start_at, "YYYY-MM-DD HH:mm:ss").value }}</div>
     <div>打印时间：{{ useDateFormat(defaultOrder.end_at, "YYYY-MM-DD HH:mm:ss").value }}</div>
-    <el-table class="my-12px" :data="defaultOrder.goods_list">
-      <el-table-column prop="name" label="项目" />
-      <el-table-column label="单价">
-        <template #default="scope"> {{ scope.row.price.toFixed(2) }} </template>
-      </el-table-column>
-      <el-table-column prop="number" label="数量" />
-      <el-table-column label="金额">
-        <template #default="scope">
-          {{ (scope.row.price * scope.row.number).toFixed(2) }}
-        </template>
-      </el-table-column>
-    </el-table>
+    <hr />
+    <div class="flex-row">
+      <div class="w-20%">项目</div>
+      <div class="w-20%">单价</div>
+      <div class="w-20%">数量</div>
+      <div class="w-20%">金额</div>
+    </div>
+    <div class="text-4" v-for="(item, index) in defaultOrder.goods_list" :key="index">
+      <div>{{ item.name }}</div>
+      <div class="flex-row">
+        <div class="w-20%"></div>
+        <div class="w-20%">{{ item.price.toFixed(2) }}</div>
+        <div class="w-20%">{{ item.number }}</div>
+        <div class="w-20%">{{ (item.price * item.number).toFixed(2) }}</div>
+      </div>
+    </div>
+    <hr />
     <div>应收金额：{{ defaultOrder.price?.toFixed(2) }}</div>
     <div>电话： {{ business.phone }}</div>
     <div>地址：{{ business.address }}</div>
+    <hr class="mt-40px" />
   </div>
 </template>
 

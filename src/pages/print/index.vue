@@ -62,11 +62,3 @@ const defaultOrder: Order = {
  */
 const printObj: any = { id: "printMe", popTitle: business.value.name };
 </script>
-
-<style scoped>
-@media print {
-  #printMe {
-    margin: 0 auto;
-  }
-}
-</style>
