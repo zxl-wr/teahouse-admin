@@ -27,6 +27,11 @@ export const routes = [
     meta: { title: '数据统计' },
   },
   {
+    path: '/reset',
+    component: () => import('@/pages/reset.vue'),
+    meta: { title: '重置软件' },
+  },
+  {
     path: '/:cathchAll(.*)', // 不识别的path自动匹配404
     component: () => import('@/pages/404.vue'),
     hidden: true,
