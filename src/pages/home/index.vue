@@ -95,7 +95,7 @@
     </template>
   </el-dialog>
   <!-- 打印预览 -->
-  <el-dialog v-model="isShowBill" title="打印预览">
+  <el-dialog style="width: fit-content;" v-model="isShowBill" title="打印预览">
     <Bill id="printBill" :defaultOrder="defaultOrder" v-if="defaultOrder"></Bill>
     <template #footer>
       <el-button type="danger" v-print="printObj">打印</el-button>
