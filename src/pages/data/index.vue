@@ -136,7 +136,6 @@ const readOrder = (order: Order) => {
  * 删除订单
  */
 const deleteOrder = (order: any) => {
-  console.log(order.id);
   db.order_store.delete(order.id);
   getTableData(); // 获取数据
 };
