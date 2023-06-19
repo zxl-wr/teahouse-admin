@@ -4,7 +4,7 @@ export interface Order {
   table_id: number; // 桌台id
   start_at: number; // 开始时间
   end_at: number; // 结束时间
-  goods_list?: Order_Goods[]; // 商品列表
+  goods_list: Order_Goods[]; // 商品列表
   price?: number; // 价格
 }
 
