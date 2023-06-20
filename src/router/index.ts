@@ -33,7 +33,7 @@ export const routes = [
   },
   {
     path: '/:cathchAll(.*)', // 不识别的path自动匹配404
-    component: () => import('@/pages/404.vue'),
+    component: () => import('@/pages/home/index.vue'),
     hidden: true,
   },
 ];
