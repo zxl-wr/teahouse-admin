@@ -24,7 +24,7 @@ export default defineConfig({
         ['flex-column', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center' }],
         ['flex-column-center', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'center' }],
         ['flex-column-between', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'space-between' }],
-        ['card', { display: 'inline-grid', border: '1px solid', 'border-radius': '0.5rem', cursor: 'pointer', overflow: 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap' }],
+        ['card', { border: '1px solid', 'border-radius': '0.5rem', cursor: 'pointer', overflow: 'hidden' }],
       ],
     }),
     AutoImport({

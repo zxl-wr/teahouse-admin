@@ -1,46 +1,30 @@
 <template>
-  <!-- 桌台 -->
-  <div class="h-auto">
-    <div class="card m-2 text-center" v-for="table in defaultTables" :key="table.id" @click="clickTable(table.id)">
+  <!-- 没有订单的桌台 -->
+  <div class="flex">
+    <div class="card m-2 flex-column-between" v-for="table in currentNoOrderList" :key="table.id"
+      @dblclick="clickTable(table.id)">
       <div class="text-5 my-2">{{ table.name }}</div>
-      <img class="w-120px" :src="filterTableImg(table.id)" alt="桌台图片" />
+      <img class="w-120px" src="@/assets/img/img-close.png" alt="桌台图片" />
     </div>
   </div>
-  <!-- 订单详情抽屉 -->
-  <el-drawer v-model="isShowDawer" direction="btt" size="300px" :with-header="false">
-    <div class="flex-row-between">
-      <el-table style="width: 620px" :data="currentOrder?.goods_list" height="260" table-layout="auto" empty-text="暂无消费">
-        <el-table-column prop="name" label="名称" />
-        <el-table-column prop="price" label="价格" />
-        <el-table-column prop="number" label="数量" />
-        <el-table-column prop="time_at" label="消费时间">
-          <template #default="scope">
-            {{ useDateFormat(scope.row.time_at, 'MM-DD HH:mm').value }}
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="danger" @click="deleteOrderGoods(scope.row)" v-if="scope.row.name != '开台费'">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="w-500px h-260px" v-if="currentOrder">
-        <div class="text-6">开始时间：{{ useDateFormat(currentOrder.start_at, 'YYYY-MM-DD HH:mm:ss').value }}</div>
-        <div class="mt-8 text-12 text-center">
-          {{ differ }}
-          <span class="text-4 c-#f4516c">(开台费：￥{{ currentTablePrice }})</span>
+  <hr />
+  <!-- 有订单的桌台 -->
+  <div class="flex">
+    <div class="card m-2 flex" v-for="order in currentOrderList" :key="order.table_id">
+      <div class="flex-column-between">
+        <div class="text-5 my-2">{{ defaultTables.find(item => item.id == order.table_id)?.name }}</div>
+        <img class="w-120px" src="@/assets/img/img-open.png" alt="桌台图片" />
+      </div>
+      <div class="mx-2 my-2 flex-column-between">
+        <div class="text-6">{{ useDateFormat(order.start_at, 'YYYY-MM-DD HH:mm:ss').value }}</div>
+        <div class="text-8 text-center"> {{ timestampDiffer(order.start_at, timestamp) }} </div>
+        <div class="w-100% flex-row-between">
+          <el-button class="w-40%" type="primary" size="large" @click="onAddGoods(order)"> 消费 </el-button>
+          <el-button class="w-40%" type="danger" size="large" @click="onEndOrder(order)"> 结算 </el-button>
         </div>
-        <div class="mb-8 text-8 text-center c-#f4516c">￥{{ currentOrderPrice }}</div>
-        <el-button class="float-right !w-120px !h-48px !text-5" type="danger" size="large" @click="isShowDialog = true">
-          结算
-        </el-button>
-        <el-button class="float-right mx-4 !w-120px !h-48px !text-5" type="primary" size="large"
-          @click="isShowTransfer = true">
-          + 消费
-        </el-button>
       </div>
     </div>
-  </el-drawer>
+  </div>
   <!-- 新增消费 -->
   <el-dialog v-model="isShowTransfer" title="新增消费" width="900" align-center :show-close="false"
     :close-on-click-modal="false" :close-on-press-escape="false">
@@ -95,7 +79,7 @@
     </template>
   </el-dialog>
   <!-- 打印预览 -->
-  <el-dialog style="width: fit-content;" v-model="isShowBill" title="打印预览">
+  <el-dialog style="width: fit-content" v-model="isShowBill" title="打印预览">
     <Bill id="printBill" :defaultOrder="defaultOrder" v-if="defaultOrder"></Bill>
     <template #footer>
       <el-button type="danger" v-print="printObj">打印</el-button>
@@ -107,72 +91,42 @@
 /**
  * 获取当前订单列表
  */
-import { db } from '@/utils/indexDB.ts'; // 数据库
 import type { Order } from '@/assets/type.ts'; // Order类型
-let currentOrderList = ref<Order[]>([]); // 当前订单列表
-let tableIdList = ref<number[]>([]); //  当前订单列表中的桌台id数组
-// 获取当前订单列表和当前订单列表中的桌台id数组
+import { db } from '@/utils/indexDB.ts'; // 数据库
+import { defaultTables } from '@/assets/constant.ts'; // 默认桌台
+const currentOrderList = ref<Order[]>([]); // 当前订单列表
+// 获取当前订单列表
 const getCurrentOrderList = async () => {
   currentOrderList.value = await db.order_store.where({ end_at: -1 }).toArray();
-  tableIdList.value = currentOrderList.value.map((item) => { return item.table_id; })
 };
 onMounted(() => getCurrentOrderList()); // 初始当前订单列表
-
-/**
- * 渲染桌台图片
- */
-import { defaultTables } from '@/assets/constant.ts'; // 默认桌台
-import img_close from '@/assets/img/img-close.png'; // 未开台图片
-import img_open from '@/assets/img/img-open.png'; // 开台图片
-// 过滤出有订单和没有订单的桌台，分别渲染图片
-const filterTableImg = (id: number) => {
-  if (currentOrderList.value.length < 1 || tableIdList.value.indexOf(id) == -1) return img_close; // 当前没有订单 或者 该桌台没有订单
-  else return img_open;
-};
+// 获取没有订单的桌台
+const currentNoOrderList = computed(() => {
+  const currentOrderTableIdList = currentOrderList.value.map((item) => item.table_id);
+  return defaultTables.filter(item => !currentOrderTableIdList.includes(item.id));
+});
 
 /**
  * 开台功能
  */
-const isShowDawer = ref(false); // 是否打开订单详情抽屉
-const currentOrder = ref<Order>(); // 当前订单
-// 判断是已有订单还是新增订单，显示订单详情
 const clickTable = async (tableId: number) => {
-  // 没有订单去新增订单
-  if (tableIdList.value.indexOf(tableId) == -1) {
-    // 弹窗确定是否开台
-    const res = await ElMessageBox
-      .confirm('是否确认开台？', { confirmButtonText: '确认', cancelButtonText: '取消' })
-      .then(() => { return true; })
-      .catch(() => { return false; });
-    if (!res) return;
-    const _timestamp = new Date().getTime(); // 开始时间
-    const _orderId = _timestamp + '00' + tableId; // 订单id
-    const _tableItem = { name: '开台费', price: 0, number: 1, time_at: _timestamp }; // 默认开台费用
-    await db.order_store.add({ id: _orderId, table_id: tableId, start_at: _timestamp, end_at: -1, goods_list: [_tableItem] }); // 数据库新增数据
-    await getCurrentOrderList(); // 获取当前订单列表
-  }
-  currentOrder.value = currentOrderList.value.find((item) => item.table_id == tableId); // 当前订单
-  isShowDawer.value = true; // 打开消费详情抽屉
+  const _timestamp = new Date().getTime(); // 开始时间
+  const _orderId = _timestamp + '00' + tableId; // 订单id
+  const _tableItem = { name: '开台费', price: 0, number: 1, time_at: _timestamp }; // 默认开台费用
+  await db.order_store.add({ id: _orderId, table_id: tableId, start_at: _timestamp, end_at: -1, goods_list: [_tableItem] }); // 数据库新增数据
+  await getCurrentOrderList(); // 获取当前订单列表
 };
 
+const currentOrder = ref<Order>(); // 当前订单
 /**
  * 计时功能
  */
 import { useDateFormat, useTimestamp } from '@vueuse/core'; // 时间格式化，当前时间戳
-const { timestamp, pause, resume } = useTimestamp({ controls: true }); // 当前时间戳，暂停获取，继续获取
-pause(); // 初始化暂停当前时间计时
-// 监听订单详情抽屉打开状态
-watch(isShowDawer, (newValue) => {
-  if (newValue) resume(); // 开始当前时间计时
-  else pause(); // 暂停当前时间计时
-});
 import { timestampDiffer } from '@/utils/format.ts'; // 时间戳相差
-const differ = ref<string>('00:00:00');// 开台时间差值
-// 计算差值
-watch(timestamp, (newValue) => {
-  if (!currentOrder.value) differ.value = '00:00:00';
-  else differ.value = timestampDiffer(currentOrder.value.start_at, newValue);
-});
+const timestamp = useTimestamp({ offset: 0 });
+
+const onAddGoods = (order: Order) => { }
+const onEndOrder = (order: Order) => { }
 
 /**
  * 开台计算收费
@@ -190,24 +144,19 @@ for (let i = 0; i < chargeRates.value.length; i++) {
     else chargeRatesArray[j] = chargeRatesArray[j - 1] + item.price;
   }
 }
-// 开台费用
-const currentTablePrice = computed(() => {
-  let _hours = parseInt(differ.value.split(':')[0] || '0');
-  return chargeRatesArray[_hours] || chargeRatesArray.slice(-1)[0]; // 取收费价格，若没有取最高价
-});
 // 更新到数据库
-watch(timestamp, async () => {
-  if (!currentOrder.value) return; // 当前没有订单，返回
-  if (currentOrder.value.goods_list[0].price == currentTablePrice.value) return; // 价格没变化，返回
-  currentOrder.value.goods_list[0].price = currentTablePrice.value; // 变更价格
-  // 更新数据库
-  db.order_store
-    .update(currentOrder.value.id, toRaw(currentOrder.value))
-    .then(() => {
-      getCurrentOrderList(); // 重新获取未关闭订单
-    })
-    .catch((error) => console.log(error));
-});
+// watch(timestamp, async () => {
+//   if (!currentOrder.value) return; // 当前没有订单，返回
+//   if (currentOrder.value.goods_list[0].price == currentTablePrice.value) return; // 价格没变化，返回
+//   currentOrder.value.goods_list[0].price = currentTablePrice.value; // 变更价格
+//   // 更新数据库
+//   db.order_store
+//     .update(currentOrder.value.id, toRaw(currentOrder.value))
+//     .then(() => {
+//       getCurrentOrderList(); // 重新获取未关闭订单
+//     })
+//     .catch((error) => console.log(error));
+// });
 
 /**
  * 消费功能
@@ -263,28 +212,28 @@ const updateOrder = async () => {
   isShowTransfer.value = false;
 };
 // 删除消费
-const deleteOrderGoods = async (e: Order_Goods) => {
-  const _currentOrder = await db.order_store.get({ id: currentOrder.value?.id });
-  if (!_currentOrder?.goods_list) return;
-  const _i = getIndexInArr(_currentOrder.goods_list, { ...e });
-  _currentOrder.goods_list.splice(_i, 1);
-  db.order_store
-    .update(_currentOrder.id, _currentOrder)
-    .then(() => {
-      currentOrder.value = _currentOrder;
-      getCurrentOrderList();
-    })
-    .catch((error) => console.log(error));
-};
+// const deleteOrderGoods = async (e: Order_Goods) => {
+//   const _currentOrder = await db.order_store.get({ id: currentOrder.value?.id });
+//   if (!_currentOrder?.goods_list) return;
+//   const _i = getIndexInArr(_currentOrder.goods_list, { ...e });
+//   _currentOrder.goods_list.splice(_i, 1);
+//   db.order_store
+//     .update(_currentOrder.id, _currentOrder)
+//     .then(() => {
+//       currentOrder.value = _currentOrder;
+//       getCurrentOrderList();
+//     })
+//     .catch((error) => console.log(error));
+// };
 //从数组中获取对象的索引
-const getIndexInArr = (_arr: object[], _obj: object) => {
-  for (var i = 0; i < _arr.length; i++) {
-    if (JSON.stringify(_arr[i]) == JSON.stringify(_obj)) {
-      return i;
-    }
-  }
-  return -1;
-};
+// const getIndexInArr = (_arr: object[], _obj: object) => {
+//   for (var i = 0; i < _arr.length; i++) {
+//     if (JSON.stringify(_arr[i]) == JSON.stringify(_obj)) {
+//       return i;
+//     }
+//   }
+//   return -1;
+// };
 
 /**
  * 统计收费
@@ -303,7 +252,7 @@ const isShowDialog = ref(false);
 const clickEndOrder = async () => {
   const _currentOrder = await db.order_store.get({ id: currentOrder.value?.id }); // 获取订单
   if (!_currentOrder) return;
-  _currentOrder.end_at = new Date().getTime(); // 添加结束时间  
+  _currentOrder.end_at = new Date().getTime(); // 添加结束时间
   _currentOrder.price = currentOrderPrice.value; // 添加总金额
   // 更新数据库
   db.order_store
@@ -311,7 +260,6 @@ const clickEndOrder = async () => {
     .then(() => {
       getCurrentOrderList(); // 刷新页面，重新获取当前订单
       isShowDialog.value = false; // 关闭结算弹窗
-      isShowDawer.value = false; // 关闭订单详情抽屉
       printBill(_currentOrder); // 打印订单
     })
     .catch((error) => console.log(error));
