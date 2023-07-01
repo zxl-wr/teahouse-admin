@@ -1,13 +1,13 @@
 // 默认桌台
 export const defaultTables = [
-  { id: 0, name: '天运厅' },
-  { id: 1, name: '福运厅' },
-  { id: 2, name: '鸿运厅' },
-  { id: 3, name: '聚运厅' },
-  { id: 4, name: '好运厅' },
-  { id: 5, name: '财运厅' },
-  { id: 6, name: '999' },
-  { id: 7, name: '888' },
+  { id: '001', name: '天运厅' },
+  { id: '002', name: '福运厅' },
+  { id: '003', name: '鸿运厅' },
+  { id: '004', name: '聚运厅' },
+  { id: '005', name: '999' },
+  { id: '006', name: '好运厅' },
+  { id: '007', name: '财运厅' },
+  { id: '008', name: '888' },
 ];
 
 // 商品类型

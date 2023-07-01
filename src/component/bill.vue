@@ -1,7 +1,7 @@
 <template>
   <div class="bg-#fff text-4" :style="{ width: `${business.width}px`, padding: `auto ${business.padding}px` }">
-    <div class="ml-16 text-6">结账单</div>
-    <div>{{ business.name }}</div>
+    <div class="ml-16 text-6">结账单·{{ business.name }}</div>
+    <div>{{ getTableName(defaultOrder.table_id) }}</div>
     <div>账单号：{{ defaultOrder.id }}</div>
     <div>开台时间：{{ useDateFormat(defaultOrder.start_at, "YYYY-MM-DD HH:mm:ss").value }}</div>
     <div>打印时间：{{ useDateFormat(defaultOrder.end_at, "YYYY-MM-DD HH:mm:ss").value }}</div>
@@ -36,6 +36,14 @@
 import { useDateFormat } from "@vueuse/core";
 import type { Order } from "@/assets/type";
 defineProps<{ defaultOrder: Order }>();
+
+/**
+ * 获取桌台名称
+ */
+import { defaultTables } from "@/assets/constant.ts"; // 默认桌台
+const getTableName = (id: string | number) => {
+  return defaultTables.find((item) => item.id == id)?.name;
+};
 
 /**
  * 商家信息
