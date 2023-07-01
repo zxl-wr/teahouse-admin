@@ -23,11 +23,24 @@ function setLocalStorage(value: Charge[]) {
 export const useChargeStore = defineStore('app_setting_charge', () => {
   const chargeRates = ref<Charge[]>(localChargeRates); // 收费标准
 
+  const chargeRatesArray = computed(() => {
+    let _arr: number[] = [];
+    for (let i = 0; i < chargeRates.value.length; i++) {
+      const item = chargeRates.value[i];
+      for (let j = item.district[0]; j < item.district[1]; j++) {
+        if (item.type == 0) _arr[j] = item.price;
+        else if (j - 1 < 0) _arr[j] = item.price;
+        else _arr[j] = _arr[j - 1] + item.price;
+      }
+    }
+    return _arr;
+  });
+
   // 更新收费标准
   function updateChargeRates(date: Charge[]) {
     chargeRates.value = date;
     setLocalStorage(date);
   }
 
-  return { chargeRates, updateChargeRates };
+  return { chargeRates, chargeRatesArray, updateChargeRates };
 });

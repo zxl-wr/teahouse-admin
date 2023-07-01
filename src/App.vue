@@ -64,10 +64,6 @@ currentRoute.value = route.path;
   border-color: var(--app-color-theme) !important;
 }
 
-.text-theme {
-  color: var(--app-color-theme);
-}
-
 /* Element-Plus */
 .el-menu {
   background-color: var(--app-color-theme);
