@@ -36,11 +36,11 @@ export default defineConfig({
         // 自定义导入的api
       ],
       resolvers: [ElementPlusResolver()],
-      dts: 'src/types/auto-imports.d.ts',
+      dts: 'src/auto-imports.d.ts',
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-      dts: 'src/types/components.d.ts',
+      dts: 'src/components.d.ts',
     }),
   ],
   resolve: {
