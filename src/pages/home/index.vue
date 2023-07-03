@@ -19,6 +19,7 @@
       <div class="mx-2 my-2 flex-column-between">
         <div class="text-6">{{ useDateFormat(order.start_at, 'YYYY-MM-DD HH:mm:ss').value }}</div>
         <div class="text-8 text-center">{{ timestampDiffer(order.start_at, timestamp) }}</div>
+        <div class="text-8 text-center c-#f56c6c">￥{{ sumPrice(order) }}</div>
         <div class="w-100% flex-row-between">
           <el-button class="w-40%" type="primary" size="large" @click="onShowTransfer(order)"> 消费 </el-button>
           <el-button class="w-40%" type="danger" size="large" @click="onShowBill(order)"> 结账 </el-button>
@@ -125,6 +126,11 @@ const getCurrentOrderPrice = (order: Order) => {
   let _num = 0;
   order.goods_list.forEach((item) => (_num += item.price));
   return _num;
+};
+// 计算总价
+const sumPrice = (order: Order) => {
+  order.goods_list[0].price = getCurrentTablePrice(order);
+  return getCurrentOrderPrice(order);
 };
 // #endregion
 
