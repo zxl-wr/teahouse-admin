@@ -31,15 +31,8 @@
   </el-table>
   <div class="py-2 px-4 bg-#fff">
     <el-config-provider :locale="zhCn">
-      <el-pagination
-        class="flex-row-reverse"
-        background
-        layout="jumper, next, pager, prev, sizes, total"
-        :total="total"
-        :page-sizes="[10, 20, 30]"
-        :page-size="pageSize"
-        :current-page="page"
-        @update:page-size="updatePageSize"
+      <el-pagination class="flex-row-reverse" background layout="jumper, next, pager, prev, sizes, total" :total="total"
+        :page-sizes="[10, 20, 30]" :page-size="pageSize" :current-page="page" @update:page-size="updatePageSize"
         @update:current-page="updatePage" />
     </el-config-provider>
   </div>
@@ -77,7 +70,9 @@ const updatePage = (e: number) => {
 };
 // 获取数据
 const getTableData = async () => {
+  total.value = await db.order_store.count(); // 获取总数
   tableData.value = await db.order_store
+    .reverse()
     .offset((page.value - 1) * pageSize.value)
     .limit(pageSize.value)
     .toArray();
