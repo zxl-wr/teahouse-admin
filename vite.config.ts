@@ -23,7 +23,10 @@ export default defineConfig({
         ['flex-row-between', { display: 'flex', 'flex-direction': 'row', 'align-items': 'center', 'justify-content': 'space-between' }],
         ['flex-column', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center' }],
         ['flex-column-center', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'center' }],
-        ['flex-column-between', { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'space-between' }],
+        [
+          'flex-column-between',
+          { display: 'flex', 'flex-direction': 'column', 'align-items': 'center', 'justify-content': 'space-between' },
+        ],
         ['card', { border: '1px solid', 'border-radius': '0.5rem', cursor: 'pointer', overflow: 'hidden' }],
       ],
     }),

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-#fff text-4" :style="{width: `${business.width}px`, padding: `auto ${business.padding}px`}">
+  <div class="bg-#fff text-4" :style="{ width: `${business.width}px`, padding: `auto ${business.padding}px` }">
     <div class="ml-16 text-6">结账单·{{ business.name }}</div>
     <div>{{ getTableName(defaultOrder.table_id) }}</div>
     <div>账单号：{{ defaultOrder.id }}</div>
@@ -33,14 +33,14 @@
 /**
  * 订单信息
  */
-import {useDateFormat} from '@vueuse/core';
-import type {Order} from '@/assets/type';
-defineProps<{defaultOrder: Order}>();
+import { useDateFormat } from '@vueuse/core';
+import type { Order } from '@/assets/type';
+defineProps<{ defaultOrder: Order }>();
 
 /**
  * 获取桌台名称
  */
-import {defaultTables} from '@/assets/constant.ts'; // 默认桌台
+import { defaultTables } from '@/assets/constant.ts'; // 默认桌台
 const getTableName = (id: string | number) => {
   return defaultTables.find((item) => item.id == id)?.name;
 };
@@ -48,7 +48,7 @@ const getTableName = (id: string | number) => {
 /**
  * 商家信息
  */
-import {useBusinessStore} from '@/store/business.ts';
+import { useBusinessStore } from '@/store/business.ts';
 const businessStore = useBusinessStore();
-const {business} = storeToRefs(businessStore); // 商家信息
+const { business } = storeToRefs(businessStore); // 商家信息
 </script>

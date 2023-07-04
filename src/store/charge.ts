@@ -1,11 +1,11 @@
-import {defineStore} from 'pinia';
-import {Charge} from '@/assets/type';
+import { defineStore } from 'pinia';
+import { Charge } from '@/assets/type';
 
 // 默认收费标准
 const defineChargeRates = [
-  {district: [0, 6], type: 0, price: 100},
-  {district: [6, 12], type: 1, price: 10},
-  {district: [12, 24], type: 0, price: 200},
+  { district: [0, 6], type: 0, price: 100 },
+  { district: [6, 12], type: 1, price: 10 },
+  { district: [12, 24], type: 0, price: 200 },
 ];
 
 // 优先查看缓存里的订单
@@ -42,5 +42,5 @@ export const useChargeStore = defineStore('app_setting_charge', () => {
     setLocalStorage(date);
   }
 
-  return {chargeRates, chargeRatesArray, updateChargeRates};
+  return { chargeRates, chargeRatesArray, updateChargeRates };
 });

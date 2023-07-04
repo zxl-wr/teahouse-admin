@@ -82,7 +82,7 @@ interface NivaOptions {
   workers?: number;
 
   /** 应用程序的激活策略,仅Mac */
-  activationPolicy?: "regular" | "accessory" | "prohibited";
+  activationPolicy?: 'regular' | 'accessory' | 'prohibited';
   /** 是否使用默认菜单创建方式,仅Mac */
   defaultMenuCreation?: boolean;
   /** 是否忽略其他应用程序的激活状态而强制激活应用程序,仅Mac */
@@ -243,10 +243,10 @@ enum NativeLabel {
 /** 菜单项选项枚举类型 */
 type MenuItemOption =
   /** 本地菜单选项 */
-  | { type: "native"; label: NativeLabel }
+  | { type: 'native'; label: NativeLabel }
   /** 自定义菜单选项 */
   | {
-      type: "item";
+      type: 'item';
       id: number;
       /** 显示的文本 */
       label: string;
@@ -260,7 +260,7 @@ type MenuItemOption =
       accelerator?: string;
     }
   /** 子菜单选项 */
-  | { type: "menu"; label: string; enabled?: boolean; children: MenuOptions };
+  | { type: 'menu'; label: string; enabled?: boolean; children: MenuOptions };
 
 /** 菜单选项列表 */
 type MenuOptions = MenuItemOption[];
@@ -301,9 +301,9 @@ type NivaShortcutsOptions = ShortcutOption[];
 /** Niva时间集合 */
 interface NivaEventMap {
   /** 窗口焦点事件 */
-  "window.focused": (eventName: string, focused: boolean) => void;
+  'window.focused': (eventName: string, focused: boolean) => void;
   /** 窗口缩放事件 */
-  "window.scaleFactorChanged": (
+  'window.scaleFactorChanged': (
     eventName: string,
     payload: {
       scaleFactor: number;
@@ -311,27 +311,27 @@ interface NivaEventMap {
     }
   ) => void;
   /** 窗口主题事件 */
-  "window.themeChanged": (eventName: string, theme: "light" | "dark" | "system") => void;
+  'window.themeChanged': (eventName: string, theme: 'light' | 'dark' | 'system') => void;
   /** 窗口关闭请求事件 */
-  "window.closeRequested": (eventName: string, payload: null) => void;
+  'window.closeRequested': (eventName: string, payload: null) => void;
   /** 窗口消息事件 */
-  "window.message": (eventName: string, payload: { from: number; message: string }) => void;
+  'window.message': (eventName: string, payload: { from: number; message: string }) => void;
   /** 菜单点击事件 */
-  "menu.clicked": (eventName: string, menuId: number) => void;
+  'menu.clicked': (eventName: string, menuId: number) => void;
   /** 托盘图标右键点击事件 */
-  "tray.rightClicked": (eventName: string, trayId: number) => void;
+  'tray.rightClicked': (eventName: string, trayId: number) => void;
   /** 托盘图标左键点击事件 */
-  "tray.leftClicked": (eventName: string, trayId: number) => void;
+  'tray.leftClicked': (eventName: string, trayId: number) => void;
   /** 托盘图标双击事件 */
-  "tray.doubleClicked": (eventName: string, trayId: number) => void;
+  'tray.doubleClicked': (eventName: string, trayId: number) => void;
   /** 全局快捷键事件 */
-  "shortcut.emit": (eventName: string, shortcutId: number) => void;
+  'shortcut.emit': (eventName: string, shortcutId: number) => void;
   /** 文件拖拽悬停事件 */
-  "fileDrop.hovered": (eventName: string, payload: { paths: string[]; position: { x: number; y: number } }) => void;
+  'fileDrop.hovered': (eventName: string, payload: { paths: string[]; position: { x: number; y: number } }) => void;
   /** 文件拖拽放置事件 */
-  "fileDrop.dropped": (eventName: string, payload: { paths: string[]; position: { x: number; y: number } }) => void;
+  'fileDrop.dropped': (eventName: string, payload: { paths: string[]; position: { x: number; y: number } }) => void;
   /** 文件拖拽取消事件 */
-  "fileDrop.cancelled": (eventName: string, payload: null) => void;
+  'fileDrop.cancelled': (eventName: string, payload: null) => void;
   [k: string]: (eventName: string, payload: any) => void;
 }
 
@@ -358,7 +358,7 @@ interface NivaDialog {
    * @param level 消息框的级别。
    * @returns 一个 Promise，在消息框关闭时解析该 Promise，或在发生错误时拒绝该 Promise。
    */
-  showMessage(title: string, content?: string, level?: "info" | "warning" | "error"): Promise<void>;
+  showMessage(title: string, content?: string, level?: 'info' | 'warning' | 'error'): Promise<void>;
   /**
    * 在文件系统中选择一个文件，支持过滤器和起始目录。
    * @param filters 文件类型筛选器。
@@ -402,7 +402,7 @@ interface NivaExtra {
    * @param policy 要设置的激活策略。
    * @returns 一个 Promise，在激活策略成功设置时解析该 Promise，如果发生错误则拒绝该 Promise。
    */
-  setActivationPolicy(policy: "regular" | "accessory" | "prohibited"): Promise<void>;
+  setActivationPolicy(policy: 'regular' | 'accessory' | 'prohibited'): Promise<void>;
   /**
    * 获取当前活动窗口的 ID，仅适用于 macOS 和 Windows。
    * 对于 macOS，将返回 `process_id_window_id` 的格式，其中 `process_id` 和 `window_id` 为整数。
@@ -467,7 +467,7 @@ interface NivaFs {
    * @param encode 要使用的编码格式。默认为 UTF-8。
    * @returns 一个 Promise，在读取文件成功时解析该 Promise 以返回文件的内容字符串，或在发生错误时拒绝该 Promise。
    */
-  read(path: string, encode?: "utf8" | "base64"): Promise<string>;
+  read(path: string, encode?: 'utf8' | 'base64'): Promise<string>;
   /**
    * 将字符串写入文件。
    * @param path 要写入的文件路径。
@@ -475,7 +475,7 @@ interface NivaFs {
    * @param encode 要使用的编码格式。默认为 UTF-8。
    * @returns 一个 Promise，在写入文件成功时解析该 Promise，或在发生错误时拒绝该 Promise。
    */
-  write(path: string, content: string, encode?: "utf8" | "base64"): Promise<void>;
+  write(path: string, content: string, encode?: 'utf8' | 'base64'): Promise<void>;
   /**
    * 将字符串追加到文件的末尾。
    * @param path 要追加的文件路径。
@@ -483,7 +483,7 @@ interface NivaFs {
    * @param encode 要使用的编码格式。默认为 UTF-8。
    * @returns 一个 Promise，在追加字符串到文件成功时解析该 Promise，或在发生错误时拒绝该 Promise。
    */
-  append(path: string, content: string, encode?: "utf8" | "base64"): Promise<void>;
+  append(path: string, content: string, encode?: 'utf8' | 'base64'): Promise<void>;
 
   /**
    * 将文件或目录移动到新位置。
@@ -752,7 +752,7 @@ interface NivaResource {
    * @param encode 要使用的字符编码，目前支持 "utf8" 和 "base64" 两种编码方式。
    * @returns 一个 Promise，在读取文件成功时解析该 Promise，或在发生错误时拒绝该 Promise。成功时返回读取的文件内容。
    */
-  read(path: string, encode?: "utf8" | "base64"): Promise<string>;
+  read(path: string, encode?: 'utf8' | 'base64'): Promise<string>;
   /**
    * 将虚拟文件系统中的文件提取到本地文件系统上。
    * @param from 要提取的虚拟文件系统中的文件路径。
@@ -1125,7 +1125,7 @@ interface NivaWindow {
    * @param id 需要请求关注的窗口 ID，省略则默认为当前窗口。
    * @returns 一个 Promise，在发送请求成功后解析该 Promise，或者在发生错误时拒绝该 Promise。
    */
-  requestUserAttention(level?: "normal" | "informational" | "critical", id?: number): Promise<void>;
+  requestUserAttention(level?: 'normal' | 'informational' | 'critical', id?: number): Promise<void>;
   /**
    * 设置窗口的内容保护模式。
    * @param enabled 是否开启内容保护模式。

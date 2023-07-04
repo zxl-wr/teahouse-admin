@@ -42,24 +42,24 @@
 /**
  * 显示收费标准
  */
-import {storeToRefs} from 'pinia';
-import {useChargeStore} from '@/store/charge.ts';
+import { storeToRefs } from 'pinia';
+import { useChargeStore } from '@/store/charge.ts';
 const chargeStore = useChargeStore();
-const {chargeRates} = storeToRefs(chargeStore); // 当前订单
+const { chargeRates } = storeToRefs(chargeStore); // 当前订单
 
 /**
  * 修改收费标准
  */
-import {Charge} from '@/assets/type.ts';
+import { Charge } from '@/assets/type.ts';
 const isShowDialog = ref(false); // 是否打开修改收费弹窗
 const temporaryCharge = ref<Charge[]>(); // 临时收费标准
-const {updateChargeRates} = chargeStore;
+const { updateChargeRates } = chargeStore;
 watch(isShowDialog, (newValue) => {
   if (newValue) temporaryCharge.value = JSON.parse(JSON.stringify(chargeRates.value));
 });
 // 新增收费标准
 const addCharge = () => {
-  temporaryCharge.value?.push({district: [0, 0], type: 0, price: 100});
+  temporaryCharge.value?.push({ district: [0, 0], type: 0, price: 100 });
 };
 // 删除某时段收费标准
 const deleteCharge = (index: number) => {

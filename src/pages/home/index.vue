@@ -74,13 +74,13 @@
 
 <script lang="ts" setup>
 // #region 获取当前订单列表
-import type {Order} from '@/assets/type.ts'; // Order类型
-import {db} from '@/utils/indexDB.ts'; // 数据库
-import {defaultTables} from '@/assets/constant.ts'; // 默认桌台
+import type { Order } from '@/assets/type.ts'; // Order类型
+import { db } from '@/utils/indexDB.ts'; // 数据库
+import { defaultTables } from '@/assets/constant.ts'; // 默认桌台
 const currentOrderList = ref<Order[]>([]); // 当前订单列表
 // 获取当前订单列表
 const getCurrentOrderList = async () => {
-  currentOrderList.value = await db.order_store.where({end_at: -1}).toArray();
+  currentOrderList.value = await db.order_store.where({ end_at: -1 }).toArray();
 };
 onMounted(() => getCurrentOrderList()); // 初始当前订单列表
 // 获取没有订单的桌台
@@ -98,22 +98,22 @@ const getTableName = (id: string | number) => {
 const clickTable = async (tableId: string | number) => {
   const _timestamp = new Date().getTime(); // 开始时间
   const _orderId = _timestamp + '' + tableId; // 订单id
-  const _tableItem = {name: '开台费', price: 0, number: 1, time_at: _timestamp}; // 默认开台费用
-  await db.order_store.add({id: _orderId, table_id: tableId, start_at: _timestamp, end_at: -1, goods_list: [_tableItem]}); // 数据库新增数据
+  const _tableItem = { name: '开台费', price: 0, number: 1, time_at: _timestamp }; // 默认开台费用
+  await db.order_store.add({ id: _orderId, table_id: tableId, start_at: _timestamp, end_at: -1, goods_list: [_tableItem] }); // 数据库新增数据
   await getCurrentOrderList(); // 获取当前订单列表
 };
 // #endregion
 
 // #region 计时功能
-import {useDateFormat, useTimestamp} from '@vueuse/core'; // 时间格式化，当前时间戳
-import {timestampDiffer} from '@/utils/format.ts'; // 时间戳相差
-const timestamp = useTimestamp({offset: 0});
+import { useDateFormat, useTimestamp } from '@vueuse/core'; // 时间格式化，当前时间戳
+import { timestampDiffer } from '@/utils/format.ts'; // 时间戳相差
+const timestamp = useTimestamp({ offset: 0 });
 // #endregion
 
 // #region 开台计算收费
-import {storeToRefs} from 'pinia';
-import {useChargeStore} from '@/store/charge.ts';
-const {chargeRatesArray} = storeToRefs(useChargeStore()); // 收费标准
+import { storeToRefs } from 'pinia';
+import { useChargeStore } from '@/store/charge.ts';
+const { chargeRatesArray } = storeToRefs(useChargeStore()); // 收费标准
 // 获取订单开台金额
 const getCurrentTablePrice = (order: Order) => {
   const time: string = timestampDiffer(order.start_at, timestamp.value);
@@ -135,20 +135,20 @@ const sumPrice = (order: Order) => {
 // #endregion
 
 // #region 获取商品列表功能
-import type {Goods, Order_Goods} from '@/assets/type.ts'; // 商品类型，订单中商品类型
-import {goodsType} from '@/assets/constant.ts'; // 默认商品类型
+import type { Goods, Order_Goods } from '@/assets/type.ts'; // 商品类型，订单中商品类型
+import { goodsType } from '@/assets/constant.ts'; // 默认商品类型
 const currentGoodsTypeId = ref<number>(-1); // 当前商品类型id
 const currentGoodsList = ref<Goods[]>(); // 当前类型中的商品列表
 // 监听商品类型切换，获取商品数据
 watch(currentGoodsTypeId, async (newValue) => {
   if (newValue == -1) currentGoodsList.value = [];
-  else currentGoodsList.value = await db.goods_store.where({type_id: newValue}).toArray();
+  else currentGoodsList.value = await db.goods_store.where({ type_id: newValue }).toArray();
 });
 // #endregion
 
 // #region 消费管理功能
-const defaultOrder = {id: '', table_id: '', start_at: -1, end_at: -1, goods_list: [], price: 0}; // 默认订单
-const currentOrder = reactive<Order>({id: '', table_id: '', start_at: -1, end_at: -1, goods_list: [], price: 0}); // 当前订单
+const defaultOrder = { id: '', table_id: '', start_at: -1, end_at: -1, goods_list: [], price: 0 }; // 默认订单
+const currentOrder = reactive<Order>({ id: '', table_id: '', start_at: -1, end_at: -1, goods_list: [], price: 0 }); // 当前订单
 const isShowTransfer = ref(false); // 是否打开新增消费穿梭框
 // 显示消费穿梭框
 const onShowTransfer = (order: Order) => {
@@ -187,7 +187,7 @@ const deleteOrderGoods = async (goods: Order_Goods) => {
 // #region 结算打印功能
 import Bill from '@/component/bill.vue';
 const isShowBill = ref(false); // 是否打开结账弹窗
-const printObj: any = ref({id: 'printBill'}); // 打印设置：打印标签的ID
+const printObj: any = ref({ id: 'printBill' }); // 打印设置：打印标签的ID
 // 显示结账弹窗
 const onShowBill = (order: Order) => {
   Object.assign(currentOrder, order);

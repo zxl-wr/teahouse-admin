@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia';
+import { defineStore } from 'pinia';
 
 interface Business {
   name: string; // 名称
@@ -37,5 +37,5 @@ export const useBusinessStore = defineStore('app_setting_business', () => {
     setLocalStorage(date);
   }
 
-  return {business, updateBusiness};
+  return { business, updateBusiness };
 });

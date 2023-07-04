@@ -1,5 +1,5 @@
-import Dexie, {Table} from 'dexie';
-import {Order, Goods} from '@/assets/type.ts';
+import Dexie, { Table } from 'dexie';
+import { Order, Goods } from '@/assets/type.ts';
 
 const dbName = 'app_db'; // 数据库名称
 

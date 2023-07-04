@@ -27,10 +27,10 @@ import Bill from '@/component/bill.vue';
 /**
  * 获取商家信息
  */
-import {storeToRefs} from 'pinia';
-import {useBusinessStore} from '@/store/business.ts';
+import { storeToRefs } from 'pinia';
+import { useBusinessStore } from '@/store/business.ts';
 const businessStore = useBusinessStore();
-const {business} = storeToRefs(businessStore); // 商家信息
+const { business } = storeToRefs(businessStore); // 商家信息
 // 更新商家信息
 const updateBusiness = () => {
   businessStore.updateBusiness(business.value);
@@ -39,18 +39,18 @@ const updateBusiness = () => {
 /**
  * 测试订单
  */
-import type {Order} from '@/assets/type';
+import type { Order } from '@/assets/type';
 // 默认订单
 const defaultOrder: Order = {
   id: '1685408400000001',
   table_id: 1,
   goods_list: [
-    {name: '开台费', price: 100, number: 1, time_at: 1672502400000},
-    {name: '消费1', price: 5, number: 1, time_at: 1672502400000},
-    {name: '消费2', price: 10, number: 1, time_at: 1672502400000},
-    {name: '消费3', price: 50, number: 1, time_at: 1672502400000},
-    {name: '消费4', price: 100, number: 1, time_at: 1672502400000},
-    {name: '消费5', price: 200, number: 1, time_at: 1672502400000},
+    { name: '开台费', price: 100, number: 1, time_at: 1672502400000 },
+    { name: '消费1', price: 5, number: 1, time_at: 1672502400000 },
+    { name: '消费2', price: 10, number: 1, time_at: 1672502400000 },
+    { name: '消费3', price: 50, number: 1, time_at: 1672502400000 },
+    { name: '消费4', price: 100, number: 1, time_at: 1672502400000 },
+    { name: '消费5', price: 200, number: 1, time_at: 1672502400000 },
   ],
   start_at: 1672502400000,
   end_at: 1672506000000,
@@ -60,5 +60,5 @@ const defaultOrder: Order = {
 /**
  * 打印设置
  */
-const printObj: any = {id: 'printMe', popTitle: business.value.name};
+const printObj: any = { id: 'printMe', popTitle: business.value.name };
 </script>

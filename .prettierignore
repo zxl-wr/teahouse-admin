@@ -1,0 +1,7 @@
+# 忽略目录或文件
+dist
+node_modules
+public
+# 忽略所有 png 文件
+*.png
+*.svg

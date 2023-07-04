@@ -43,14 +43,14 @@
 /**
  * 获取商品数据
  */
-import {goodsType} from '@/assets/constant.ts'; // 商品类型
-import {db} from '@/utils/indexDB.ts'; // 数据库
+import { goodsType } from '@/assets/constant.ts'; // 商品类型
+import { db } from '@/utils/indexDB.ts'; // 数据库
 const currentTab = ref(-1); // 默认类型
 const tableData = ref<object[]>([]); // 表格数据
 // 获取表单数据
 const getTableData = async () => {
   if (currentTab.value == -1) tableData.value = await db.goods_store.orderBy('id').toArray();
-  else tableData.value = await db.goods_store.where({type_id: currentTab.value}).toArray();
+  else tableData.value = await db.goods_store.where({ type_id: currentTab.value }).toArray();
 };
 onMounted(() => {
   getTableData();
@@ -60,8 +60,8 @@ watch(currentTab, () => getTableData()); // 监听类型切换
 /**
  * 新增商品功能
  */
-import {Goods} from '@/assets/type.ts';
-import {IndexableType} from 'dexie';
+import { Goods } from '@/assets/type.ts';
+import { IndexableType } from 'dexie';
 // 新增的数据
 const newGoods = reactive<Goods>({
   name: '', // 名称
@@ -78,7 +78,7 @@ const closeDialog = () => {
 };
 // 新增商品
 const addGoods = async () => {
-  await db.goods_store.add({name: newGoods.name, type_id: newGoods.type_id, price: newGoods.price});
+  await db.goods_store.add({ name: newGoods.name, type_id: newGoods.type_id, price: newGoods.price });
   getTableData();
   closeDialog();
 };

@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts" setup>
-import {db} from '@/utils/indexDB.ts'; // 数据库
+import { db } from '@/utils/indexDB.ts'; // 数据库
 
 // 重置软件
 const reset = () => {
-  ElMessageBox.confirm('是否确认重置软件？重置后请重启软件！', {confirmButtonText: '确认', cancelButtonText: '取消'}).then(() => {
+  ElMessageBox.confirm('是否确认重置软件？重置后请重启软件！', { confirmButtonText: '确认', cancelButtonText: '取消' }).then(() => {
     localStorage.clear();
     db.delete();
     Niva.api.window.close(0);

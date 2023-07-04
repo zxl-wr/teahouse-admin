@@ -57,7 +57,7 @@
  * 获取订单表格数据
  */
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'; // 中文设置
-import {db} from '@/utils/indexDB.ts'; // 数据库
+import { db } from '@/utils/indexDB.ts'; // 数据库
 const total = ref<number>(0); // 数据总量
 const page = ref<number>(1); // 当前页码
 const pageSize = ref<number>(10); // 页容量
@@ -89,7 +89,7 @@ const getTableData = async () => {
  * 清理数据
  */
 const clearData = async () => {
-  const res = await ElMessageBox.confirm('是否确认清理数据？', {confirmButtonText: '确认', cancelButtonText: '取消'})
+  const res = await ElMessageBox.confirm('是否确认清理数据？', { confirmButtonText: '确认', cancelButtonText: '取消' })
     .then(() => {
       return true;
     })
@@ -106,12 +106,12 @@ const clearData = async () => {
 /**
  * 格式化显示
  */
-import {defaultTables} from '@/assets/constant'; // 桌台列表
+import { defaultTables } from '@/assets/constant'; // 桌台列表
 const filterTableName = (id: string | number) => {
   const _name = defaultTables.find((item) => item.id == id)?.name;
   return _name;
 };
-import {useDateFormat} from '@vueuse/core'; // 时间格式化
+import { useDateFormat } from '@vueuse/core'; // 时间格式化
 const filterEndAt = (time: number) => {
   if (time == -1) return '未结束';
   return useDateFormat(time, 'YYYY-MM-DD HH:mm:ss').value;
@@ -121,7 +121,7 @@ const filterEndAt = (time: number) => {
  * 查看订单、打印订单
  */
 import Bill from '@/component/bill.vue';
-import type {Order} from '@/assets/type.ts'; // Order类型
+import type { Order } from '@/assets/type.ts'; // Order类型
 const isShowBill = ref(false); // 是否预览打印
 const defaultOrder = ref<Order>(); // 打印的订单信息
 // 打印设置
